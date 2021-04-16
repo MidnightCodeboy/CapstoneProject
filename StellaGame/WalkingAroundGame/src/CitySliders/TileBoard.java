@@ -94,7 +94,7 @@ public class TileBoard extends Sprite implements MouseListener{
                 visualRandomizationSteps--;
                 sounds.play("Slide1", 1);
             } else {
-                sounds.play("Fail", 1);
+                //sounds.play("Fail", 1);
             }
         }
         
