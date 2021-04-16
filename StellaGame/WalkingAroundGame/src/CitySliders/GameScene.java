@@ -34,6 +34,7 @@ public class GameScene extends Scene{
     private Legend legend;
     private GoAwayButton GAButton;
     private Caroussel caroussel;
+    private Fade fade;
     
     //
     ArrayList<Card> cards;
@@ -62,6 +63,8 @@ public class GameScene extends Scene{
     private State gameState = State.SETUP;
     private boolean isEnteringState = true;
     private boolean isGongable = false; // Has clock gong not been played yet?
+    private boolean isFadable = true; // is the current state allowed to trigger a fade?
+    private int waitToFade = 0;
     
     /***
      * Constructor.
@@ -89,6 +92,8 @@ public class GameScene extends Scene{
                 if (isEnteringState){
                     // do some setup
                     initializeSprites();
+                    isFadable = true;
+                    fade.fade(Fade.Direction.IN, 4);
                     
                     GAButton.setMessage("Welcome to Round " + (currentCardIndex + 1));
                     GAButton.setButtonText("Start Round");
@@ -110,6 +115,7 @@ public class GameScene extends Scene{
             case SHUFFLE:
                 if (isEnteringState){
                     // do some setup
+                    isFadable = true;
                     tileBoard.visualRandomize(cards.get(currentCardIndex).getRandomizationSteps());
                     
                     isEnteringState = false;
@@ -126,6 +132,7 @@ public class GameScene extends Scene{
             case PLAY:
                 if (isEnteringState){
                     // do some setup
+                    isFadable = true;
                     clock.start();
                     //sounds.start("Background");
                     sounds.play("Background", Clip.LOOP_CONTINUOUSLY);
@@ -181,6 +188,10 @@ public class GameScene extends Scene{
                         caroussel.setActive(true);
                     }
                     
+                    if (keys.isKeyTyped(KeyEvent.VK_Q)){ // Quit Game
+                        System.exit(0);
+                    }
+                    
                     if (tileBoard.isSolved()){ // Puzzle solved
                         isEnteringState = true;
                         gameState = State.WOOHOO;
@@ -190,6 +201,7 @@ public class GameScene extends Scene{
             case PAUSE:
                 if (isEnteringState){
                     // do some setup
+                    isFadable = true;
                     clock.stop();
                     sounds.stop("Background");
                     
@@ -198,8 +210,19 @@ public class GameScene extends Scene{
                     // do stuff
                     
                     // Listen for carousel zlide
-                    if (keys.isKeyTyped(KeyEvent.VK_LEFT)) caroussel.left();
-                    else if (keys.isKeyTyped(KeyEvent.VK_RIGHT)) caroussel.right();
+                    if (keys.isKeyTyped(KeyEvent.VK_LEFT)){
+                        // Play slide sound
+                        if(caroussel.getCurrentCardIndex() == 0) sounds.play("Fail", 1);
+                        else  sounds.play("Slide1", 1);
+                        
+                        caroussel.left();
+                    } else if (keys.isKeyTyped(KeyEvent.VK_RIGHT)){
+                                                // Play slide sound
+                        if(caroussel.getCurrentCardIndex() == cards.size() - 1) sounds.play("Fail", 1);
+                        else  sounds.play("Slide1", 1);
+                        
+                        caroussel.right();
+                    }
                     
                     // check for state transition criteria
                     if (keys.isKeyTyped(KeyEvent.VK_P)){
@@ -213,6 +236,7 @@ public class GameScene extends Scene{
             case RESET:
                 if (isEnteringState){
                     // do some setup
+                    isFadable = true;
                     clock.stop();
                     clock.reset();
                     
@@ -226,19 +250,30 @@ public class GameScene extends Scene{
                     isEnteringState = false;
                 } else {
                     // do stuff
-                    if (keys.isKeyTyped(KeyEvent.VK_ENTER)) GAButton.setIsListening(false);
+                    if (keys.isKeyTyped(KeyEvent.VK_ENTER)){
+                        GAButton.setIsListening(false);
+                        sounds.play("Click", 1);
+                    }
                     
                     // check for state transition criteria
                     if (!GAButton.isIsListening()){
-                        sounds.play("Click", 1);
-                        isEnteringState = true;
-                        gameState = State.SETUP;
+                        if (isFadable){
+                            isFadable = false;
+                            fade.fade(Fade.Direction.OUT, 4);
+                            waitToFade = 100;
+                        }
+
+                        if (waitToFade == 0){
+                            isEnteringState = true;
+                            gameState = State.SETUP;
+                        }
                     }
                 }
                 break;
             case WOOHOO:
                 if (isEnteringState){
                     // do some setup
+                    isFadable = true;
                     clock.stop();
                     sounds.play("LevelComplete", 1);
                     
@@ -264,14 +299,26 @@ public class GameScene extends Scene{
                     isEnteringState = false;
                 } else {
                     // do stuff
-                    if (keys.isKeyTyped(KeyEvent.VK_ENTER)) GAButton.setIsListening(false);
+                    if (keys.isKeyTyped(KeyEvent.VK_ENTER)){
+                        GAButton.setIsListening(false);
+                        sounds.play("Click", 1);
+                    }
                     
                     // check for state transition criteria
                     if (!GAButton.isIsListening()){
-                        sounds.play("Click", 1);
-                        if (currentCardIndex < cards.size() - 1){
-                            isEnteringState = true;
-                            gameState = State.SETUP;
+                       
+                        if (currentCardIndex < cards.size() - 1){ // Go to next round
+                            if (isFadable){
+                                isFadable = false;
+                                fade.fade(Fade.Direction.OUT, 4);
+                                waitToFade = 100;
+                            }
+                            
+                            if (waitToFade == 0){
+                                isEnteringState = true;
+                                gameState = State.SETUP;
+                            }
+                            
                         } else {
                             isEnteringState = true;
                             gameState = State.EXIT;
@@ -282,27 +329,41 @@ public class GameScene extends Scene{
             case EXIT:
                 if (isEnteringState){
                     // do some setup
+                    isFadable = true;
+                    sounds.stop("Background");
                     sounds.play("GameComplete", 1);
                     
                     CardLoader.resetCards(cards);
                     CardLoader.saveCards(cards, CARDS_PATH);
                     
                     // wait to quit
-                    GAButton.setMessage("Ready to quit!");
+                    GAButton.setMessage("Congratulation!\n"
+                            + "You completed every puzzle\n"
+                            + "we threw at you\n"
+                            + "Your Accumulated Score\n"
+                            + "was " + clapper.getAccumulatedScore() + "points!");
                     GAButton.setButtonText("OK");
                     GAButton.setIsListening(true);
                     
                     isEnteringState = false;
                 } else {
                     // do stuff
-                    if (keys.isKeyTyped(KeyEvent.VK_ENTER)) GAButton.setIsListening(false);
+                    if (keys.isKeyTyped(KeyEvent.VK_ENTER)){
+                        GAButton.setIsListening(false);
+                        sounds.play("Click", 1);
+                    }
                     
                     // check for state transition criteria
                     if (!GAButton.isIsListening()){
-                        sounds.play("Click", 1);
-                        isEnteringState = true;
-                        // gameState = // some new state
-                        setNextScene("credits");
+                        if (isFadable){
+                            isFadable = false;
+                            fade.fade(Fade.Direction.OUT, 4);
+                            waitToFade = 100;
+                        }
+
+                        if (waitToFade == 0){
+                            setNextScene("credits");
+                        }
                     }
                 }
                 break;
@@ -317,6 +378,9 @@ public class GameScene extends Scene{
         tileBoard.update();
         caroussel.update();
         GAButton.update();
+        fade.update();
+        
+        if (waitToFade > 0) waitToFade--;
     }
 
     //------------------------------ Paint -----------------------------------//
@@ -339,6 +403,7 @@ public class GameScene extends Scene{
         displayLevelName(bufferedGraphics);
         caroussel.paint(bufferedGraphics, camera);
         GAButton.paint(bufferedGraphics, camera);
+        fade.paint(bufferedGraphics, camera);
         
         g.drawImage(imageBuffer, 0, 0, width, height, null);
     }
@@ -380,6 +445,8 @@ public class GameScene extends Scene{
         addMouseListener(GAButton);
 
         caroussel = new Caroussel((int)(width * 0.5), (int)(height * 0.5), (int)(width), (int)(height), cards);
+        
+        fade = new Fade((int)(width / 2), (int)(height / 2), width, height, Color.BLACK);
         
         isGongable = true;
     }

@@ -59,6 +59,7 @@ public class SceneSelector extends JFrame implements Runnable {
         keys.listenForKey(KeyEvent.VK_D);   // Listen for D
         keys.listenForKey(KeyEvent.VK_P);   // Listen for P
         keys.listenForKey(KeyEvent.VK_O);   // Listen for O
+        keys.listenForKey(KeyEvent.VK_Q);   // Listen for Q
         keys.listenForKey(KeyEvent.VK_I);   // Listen for I
         keys.listenForKey(KeyEvent.VK_U);   // Listen for U
         keys.listenForKey(KeyEvent.VK_R);   // Listen for R

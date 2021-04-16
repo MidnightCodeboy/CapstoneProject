@@ -15,21 +15,13 @@ import java.awt.Graphics;
  */
 public class SplashScene extends Scene{
     
-    // Objects to be annimated
-    
-    /***
-     * Constructor.
-     * 
-     * @param size Dimensions of the window
-     * @param backgroundImagePath path to the background image file
-     * @param keys keys object, used to capture user keystrokes
-     */
+    private Fade fade;
+    private boolean isFadable = true; // is the current state allowed to trigger a fade?
+    private int waitToFade = 0;
+        
     public SplashScene(Dimension size, String backgroundImagePath, Keys keys, SoundClipper sounds){
         super(size, backgroundImagePath, keys, sounds);
-        
-        // Add sprites to the scene
-        
-        // Set Stella walking
+        fade = new Fade((int)(width / 2), (int)(height / 2), width, height, Color.BLACK);
     }
     
     /***
@@ -41,11 +33,21 @@ public class SplashScene extends Scene{
         super.update();
 
         // Wait before moving to next scene
-        if (sceneCounter == 100 && firstTimeInScene) {
+        if (sceneCounter == 200 && firstTimeInScene) {
+            if (isFadable){
+                isFadable = false;
+                fade.fade(Fade.Direction.OUT, 4);
+                waitToFade = 100;
+            }
+        }
+        
+        if (sceneCounter > 200 && waitToFade == 0){
             setNextScene("game");
         }
         
-        // Update Stella
+        fade.update();
+        
+        if (waitToFade > 0) waitToFade--;
     }
 
     /***
@@ -57,9 +59,8 @@ public class SplashScene extends Scene{
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        // Paint Sprites
-
-        g.drawImage(imageBuffer, 0, 0, width, height, null);
+        fade.paint(bufferedGraphics, camera);
+        g.drawImage(imageBuffer, 0, 0, width, height, null); 
     }
     
 }

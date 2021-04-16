@@ -8,7 +8,9 @@ package CitySliders;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -21,9 +23,11 @@ public class Caroussel extends Sprite{
     private Color ribbonColor = new Color(0, 0, 0, 200);
     private Color line = Color.BLACK;
     private Color cardColor = Color.WHITE;
+    private Color statsColor = Color.RED;
     private Color shadedCardColor = new Color(200, 200, 200);
     private Color buttonCoolColor = new Color(200, 200, 200);
     private Color buttonHotColor = new Color(100, 150, 150);
+    private Color maskColor = new Color(255, 255, 255, 200);
     
     // Fonts
     private Font messageFont = new Font("Times New Roman", Font.BOLD, 25);
@@ -35,6 +39,14 @@ public class Caroussel extends Sprite{
     // Cards
     private ArrayList<Card> cards;
     private int currentCardIndex;
+
+    public int getCurrentCardIndex() {
+        return currentCardIndex;
+    }
+
+    public void setCurrentCardIndex(int currentCardIndex) {
+        this.currentCardIndex = currentCardIndex;
+    }
     
     // State
     private boolean isActive;
@@ -98,10 +110,43 @@ public class Caroussel extends Sprite{
             g.setColor(line);
             g.drawRoundRect((int)(x - w * 0.345), (int)(y - h * 0.29), (int)(w * 0.69), (int)(h * 0.58), 30, 30);
             
+            // Paint Card Stats
+            Card c = cards.get(currentCardIndex);
+            String levelName = "Not Completed";
+            String levelGrid = "---------";
+            String levelTime = "---------";
+            String levelScore = "---------";
+            
             g.drawString("Level " + (currentCardIndex + 1) + "/" + cards.size(), (int)(x - w * 0.32), (int)(y - h * 0.25));
             
+            if (c.getActualTimeToComplete() < Integer.MAX_VALUE){ // Puzzle was solved
+                levelName = c.getLevelName();
+                levelGrid = c.getRows() + "x" + c.getColumns();
+                levelTime = c.getActualTimeToComplete() + "s";
+                levelScore = "" + c.getScore() + " points";
+            } else {
+                
+            }
+       
+            g.setFont(messageFont);
+            g.setColor(statsColor);
+            g.drawString(levelName, (int)(x - w * 0.32), (int)(y - h * 0.15));
+            g.drawString(levelGrid, (int)(x - w * 0.32), (int)(y - h * 0.05));
+            g.drawString(levelTime, (int)(x - w * 0.32), (int)(y - h * -0.05));
+            g.drawString(levelScore, (int)(x - w * 0.32), (int)(y - h * -0.15));
+            
             // Paint Image
+            g.setColor(line);
             g.draw(imageBounds);
+            
+            Image cardImage = getImage(c.getImagePath());
+            g.drawImage(cardImage, imageBounds.x, imageBounds.y, imageBounds.width, imageBounds.height, null);
+            
+            if (c.getActualTimeToComplete() == Integer.MAX_VALUE){
+                g.setColor(maskColor);
+                g.fillRect(imageBounds.x, imageBounds.y, imageBounds.width, imageBounds.height);
+            }
+            
         }        
     }
     
@@ -133,6 +178,11 @@ public class Caroussel extends Sprite{
     public void setActive(boolean isActive){
         this.isActive = isActive;
         this.isVisible = this.isActive;
+    }
+    
+    private Image getImage(String imagePath){
+        URL url = getClass().getResource(imagePath);
+        return toolkit.getImage(url);
     }
     
 }

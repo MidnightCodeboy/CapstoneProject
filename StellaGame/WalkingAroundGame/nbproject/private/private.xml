@@ -3,7 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/walkingaroundgame/GameScene.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/SceneSelector.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/Clapper.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/Fade.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/CreditsScene.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/Card.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/Caroussel.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/Sprite.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/GameScene.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/TileBoard.java</file>
+            <file>file:/C:/CollegeLastTerm/CapStone/bin/Project/CapstoneProject/StellaGame/WalkingAroundGame/src/CitySliders/SplashScene.java</file>
         </group>
     </open-files>
 </project-private>
