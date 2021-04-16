@@ -1,0 +1,8 @@
+assets/images/london1.jpg LONDON 3 3 60 2147483647 0 5
+assets/images/paris.jpg PARIS 3 3 45 2147483647 0 5
+assets/images/saintpetersburg.jpg SAINT_PETERSBURG 3 3 180 2147483647 0 5
+assets/images/moscow.jpg MOSCOW 3 3 180 2147483647 0 5
+assets/images/ottawa.jpg OTTAWA 3 3 180 2147483647 0 5
+assets/images/paris.jpg PARIS 3 3 180 2147483647 0 5
+assets/images/london1.jpg LONDON 3 3 180 2147483647 0 5
+assets/images/moscow.jpg MOSCOW 3 3 180 2147483647 0 5
