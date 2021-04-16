@@ -18,8 +18,7 @@ import java.util.Random;
 import javax.sound.sampled.Clip;
 
 /**
- *  Subclass of Scene. Creates an interactive environment that with a map and a player to move around the scene.
- *  Enforces game logic like collision detection etc. This is the main part of the Application.
+ *  
  */
 public class GameScene extends Scene{
     
